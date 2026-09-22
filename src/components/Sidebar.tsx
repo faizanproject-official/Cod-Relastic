@@ -7,112 +7,105 @@ import {
   BarChart3, 
   Settings, 
   CreditCard, 
-  ShoppingBag, 
-  FileCode, 
-  ExternalLink,
-  ChevronDown
+  Store, 
+  FileCode,
+  Layers
 } from 'lucide-react';
 
 interface SidebarProps {
   currentTab: string;
   onSelectTab: (tab: string) => void;
+  onOpenStorePreview?: () => void;
+  onOpenDeveloperGuide?: () => void;
   pendingOrdersCount?: number;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentTab,
   onSelectTab,
+  onOpenStorePreview,
+  onOpenDeveloperGuide,
   pendingOrdersCount = 1
 }) => {
   const navItems = [
-    { id: 'form-designer', label: 'Form Designer', icon: Palette },
-    { id: 'sales-booster', label: 'Sales Booster', icon: TrendingUp },
-    { id: 'fraud-prevention', label: 'Fraud Prevention', icon: ShieldAlert },
-    { id: 'delivery-success', label: 'Delivery Success', icon: Truck },
-    { id: 'analytics', label: 'Analytics & Orders', icon: BarChart3, badge: pendingOrdersCount > 0 ? `${pendingOrdersCount}` : undefined },
-    { id: 'settings', label: 'Settings & Integrations', icon: Settings },
-    { id: 'billing-plans', label: 'Billing Plans', icon: CreditCard, highlight: true },
-    { id: 'developer-guide', label: 'Hosting & Partner Guide', icon: FileCode, special: true }
+    { id: 'form-designer', label: 'Form Designer' },
+    { id: 'sales-booster', label: 'Sales Booster' },
+    { id: 'fraud-prevention', label: 'Fraud Prevention' },
+    { id: 'delivery-success', label: 'Delivery Success' },
+    { id: 'analytics', label: 'Analytics', badge: pendingOrdersCount > 0 ? `${pendingOrdersCount}` : undefined },
+    { id: 'settings', label: 'Settings & Integrations' },
+    { id: 'billing-plans', label: 'Billing Plans' },
   ];
 
   return (
-    <aside className="w-64 bg-[#ebebeb] dark:bg-[#1c1c1c] border-r border-neutral-200 dark:border-neutral-800 flex flex-col h-[calc(100vh-50px)] select-none">
-      {/* App Header in Sidebar */}
-      <div className="p-3.5 border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-[#181818]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow">
-              <ShoppingBag className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="font-semibold text-xs text-neutral-900 dark:text-white leading-tight flex items-center gap-1.5">
-                COD Realistic
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              </div>
-              <div className="text-[11px] text-neutral-500 dark:text-neutral-400">
-                1-Click Cash on Delivery
-              </div>
-            </div>
+    <aside className="w-56 sm:w-60 bg-[#ededed] border-r border-neutral-200/90 flex flex-col h-[calc(100vh-50px)] select-none shrink-0 overflow-y-auto">
+      <div className="p-3 pt-3.5 space-y-1">
+        {/* Top Active Card/Button matching Image 1: Stacked Icon + COD Realistic */}
+        <button
+          onClick={() => onSelectTab('dashboard')}
+          className={`w-full text-left px-3 py-2 rounded-lg text-xs sm:text-[13px] font-bold flex items-center gap-2.5 transition-all cursor-pointer ${
+            currentTab === 'dashboard'
+              ? 'bg-white text-neutral-900 shadow-2xs'
+              : 'text-neutral-800 hover:bg-neutral-200/70'
+          }`}
+          title="Go to Dashboard"
+        >
+          {/* Custom Stacked Plates Icon matching Releasit logo in Image 1 */}
+          <div className="w-4 h-4 flex flex-col justify-center gap-[2.5px] shrink-0">
+            <span className="w-4 h-[3px] bg-neutral-800 rounded-xs"></span>
+            <span className="w-4 h-[3px] bg-neutral-800 rounded-xs"></span>
+            <span className="w-4 h-[3px] bg-neutral-800 rounded-xs"></span>
           </div>
-          <ChevronDown className="w-4 h-4 text-neutral-400" />
+          <span className="truncate">COD Realistic</span>
+        </button>
+
+        {/* Navigation list matching Image 1 */}
+        <div className="space-y-0.5 pt-1 pl-1">
+          {navItems.map((item) => {
+            const isActive = currentTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => onSelectTab(item.id)}
+                className={`w-full text-left px-3 py-1.5 rounded-lg text-xs sm:text-[13px] transition-all flex items-center justify-between cursor-pointer ${
+                  isActive
+                    ? 'bg-white text-neutral-900 font-semibold shadow-2xs'
+                    : 'text-neutral-700 hover:text-neutral-900 hover:bg-neutral-200/60 font-medium'
+                }`}
+              >
+                <span className="truncate">{item.label}</span>
+                {item.badge && (
+                  <span className="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ml-1">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Navigation List */}
-      <div className="flex-1 py-3 px-2 space-y-1 overflow-y-auto">
-        <div className="px-3 pb-1 text-[10px] font-semibold tracking-wider uppercase text-neutral-400">
-          Core Features
-        </div>
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => onSelectTab(item.id)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-medium transition-all ${
-                isActive
-                  ? 'bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white shadow-sm border border-neutral-200/80 dark:border-neutral-700 font-semibold'
-                  : item.special
-                  ? 'text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40'
-                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/60 dark:hover:bg-neutral-800/60'
-              }`}
-            >
-              <div className="flex items-center space-x-2.5">
-                <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : item.special ? 'text-indigo-500' : 'text-neutral-500'}`} />
-                <span>{item.label}</span>
-              </div>
-              {item.badge && (
-                <span className="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                  {item.badge}
-                </span>
-              )}
-              {item.highlight && (
-                <span className="text-[9px] bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 px-1.5 py-0.5 rounded border border-amber-300 dark:border-amber-800 font-bold">
-                  Plans
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+      {/* Subtle Bottom Utilities */}
+      <div className="mt-auto p-3 pt-2 space-y-1 border-t border-neutral-200/80">
+        {onOpenStorePreview && (
+          <button
+            onClick={onOpenStorePreview}
+            className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/60 font-medium flex items-center gap-2 transition-all cursor-pointer"
+          >
+            <Store className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Store Preview</span>
+          </button>
+        )}
 
-      {/* Quick Status / Help widget at bottom */}
-      <div className="p-3 m-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-[11px] font-semibold text-emerald-900 dark:text-emerald-300">
-            Active Store Plan
-          </span>
-          <span className="text-[10px] bg-emerald-200 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-1.5 py-0.2 rounded font-bold">
-            Free
-          </span>
-        </div>
-        <p className="text-[10px] text-emerald-700 dark:text-emerald-400 mb-2 leading-relaxed">
-          Pakistan Free Plan: 4 / 100 orders used this month
-        </p>
-        <div className="w-full bg-emerald-200 dark:bg-emerald-900 rounded-full h-1.5 overflow-hidden">
-          <div className="bg-emerald-600 h-1.5 rounded-full w-[4%]"></div>
-        </div>
+        {onOpenDeveloperGuide && (
+          <button
+            onClick={onOpenDeveloperGuide}
+            className="w-full text-left px-3 py-1.5 rounded-lg text-xs text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/60 font-medium flex items-center gap-2 transition-all cursor-pointer"
+          >
+            <FileCode className="w-3.5 h-3.5 text-indigo-600" />
+            <span>Developer Guide</span>
+          </button>
+        )}
       </div>
     </aside>
   );

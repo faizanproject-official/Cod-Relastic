@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FormSettings, CodOrder } from '../types';
+import { LegacyCodModal } from './LegacyCodModal';
 import { 
   ShoppingBag, 
   Heart, 
@@ -14,8 +15,12 @@ import {
   CheckCircle2, 
   ArrowLeft,
   ChevronRight,
+  ChevronDown,
   PackageCheck,
-  PhoneCall
+  PhoneCall,
+  Sparkles,
+  Lock,
+  ShoppingCart
 } from 'lucide-react';
 
 interface StorefrontSimulationProps {
@@ -29,10 +34,53 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
   onPlaceOrder,
   onBackToAdmin
 }) => {
-  // Storefront Product State (HerbiVital Herbal Vitality Oil - matching Screenshot 2)
+  // Demo products supporting the exact Tymon Herbal Eye Drops from user's screenshot
+  const demoProducts = [
+    {
+      id: 'tymon-eye-drops',
+      title: 'Tymon™ Herbal Eye Drops',
+      subtitle: 'FOR COOLING - Soothes | Refreshes | Relieves Dryness - 10 ml',
+      badge: 'HERBAL EYE CARE',
+      rating: '4.9/5 (188 verified reviews)',
+      vendor: 'Tymon Pharma',
+      sku: 'TYM-EYE-10ML',
+      price: 1299,
+      comparePrice: 1999,
+      saveAmount: 700,
+      description: 'Tymon™ Herbal Eye Drops is an ayurvedic formulation designed for cooling and refreshing tired, dry eyes. Instantly relieves irritation, redness, computer screen strain, and environmental dust exposure.',
+      images: [
+        'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop&q=80'
+      ]
+    },
+    {
+      id: 'vitality-oil',
+      title: 'Herbal Vitality Oil',
+      subtitle: '100% Herbal Blend & Organic Extracts - 50 ml',
+      badge: 'PREMIUM HERBAL FORMULATION',
+      rating: '4.9/5 from 342 reviews',
+      vendor: 'Herbi Vital',
+      sku: 'HV-OIL-01',
+      price: 1500,
+      comparePrice: 2200,
+      saveAmount: 700,
+      description: 'Herbal Vitality Oil is a natural blend designed to support stamina, energy, and overall vitality through consistent external use and herbal nourishment.',
+      images: [
+        "https://images.unsplash.com/photo-1608248597359-2e6977ec3093?w=800&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&auto=format&fit=crop&q=80"
+      ]
+    }
+  ];
+
+  const [selectedProductIndex, setSelectedProductIndex] = useState(0);
+  const currentProduct = demoProducts[selectedProductIndex];
+
+  // Storefront Product State
   const [productQty, setProductQty] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isCodModalOpen, setIsCodModalOpen] = useState(false);
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
   // COD Form State inside Modal
   const [selectedOfferIndex, setSelectedOfferIndex] = useState(0);
@@ -45,12 +93,6 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState<CodOrder | null>(null);
   const [formError, setFormError] = useState('');
-
-  const productImages = [
-    "https://images.unsplash.com/photo-1608248597359-2e6977ec3093?w=800&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&auto=format&fit=crop&q=80"
-  ];
 
   const handleOpenCodModal = () => {
     setIsCodModalOpen(true);
@@ -78,8 +120,8 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
 
     const chosenOffer = settings.quantityOffers[selectedOfferIndex] || {
       qty: productQty,
-      price: 1500 * productQty,
-      title: `${productQty} Bottle(s)`
+      price: currentProduct.price * productQty,
+      title: `${productQty} Piece(s)`
     };
 
     setTimeout(() => {
@@ -89,7 +131,7 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
         address: address.trim(),
         city,
         province,
-        productName: "Herbal Vitality Oil - 50ml",
+        productName: currentProduct.title,
         quantity: chosenOffer.qty,
         totalAmount: chosenOffer.price,
         currency: "Rs.",
@@ -162,15 +204,43 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
         </div>
       </header>
 
-      {/* Main Product Page (Herbal Vitality Oil - Exact representation of user's Image 2) */}
+      {/* Main Product Page */}
       <main className="max-w-6xl mx-auto px-4 py-8">
+        {/* Product Switcher Bar for Merchant Testing */}
+        <div className="mb-4 flex items-center justify-between bg-white p-2.5 rounded-xl border border-neutral-200 shadow-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-neutral-700">Preview Store Product:</span>
+            <div className="flex gap-1.5">
+              {demoProducts.map((p, idx) => (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    setSelectedProductIndex(idx);
+                    setSelectedImage(0);
+                  }}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                    selectedProductIndex === idx
+                      ? 'bg-neutral-900 text-white shadow-xs'
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                  }`}
+                >
+                  {p.title}
+                </button>
+              ))}
+            </div>
+          </div>
+          <span className="text-[11px] text-neutral-500 font-medium">
+            Form Theme: <strong className="text-neutral-900 capitalize">{settings.themeStyle}</strong>
+          </span>
+        </div>
+
         {/* Breadcrumb */}
         <div className="text-xs text-neutral-500 mb-6 flex items-center gap-1">
           <span>Home</span>
           <ChevronRight className="w-3 h-3" />
           <span>Products</span>
           <ChevronRight className="w-3 h-3" />
-          <span className="text-neutral-900 font-medium">Herbal Vitality Oil</span>
+          <span className="text-neutral-900 font-medium">{currentProduct.title}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
@@ -178,27 +248,27 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
           <div className="lg:col-span-6 space-y-4">
             <div className="relative rounded-2xl overflow-hidden bg-neutral-900 aspect-square shadow-lg border border-neutral-200">
               <img
-                src={productImages[selectedImage]}
-                alt="Herbal Vitality Oil"
+                src={currentProduct.images[selectedImage] || currentProduct.images[0]}
+                alt={currentProduct.title}
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
-              <span className="absolute top-4 left-4 bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
-                -32% OFF
+              <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                Save Rs. {currentProduct.saveAmount}
               </span>
               <span className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-xs text-white text-xs px-3 py-1.5 rounded-lg">
-                100% Herbal Blend &amp; Organic Extracts
+                {currentProduct.subtitle}
               </span>
             </div>
 
             {/* Thumbnail previews */}
             <div className="flex gap-3">
-              {productImages.map((img, idx) => (
+              {currentProduct.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
                   className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                    selectedImage === idx ? 'border-emerald-600 ring-2 ring-emerald-600/30' : 'border-neutral-200 opacity-70'
+                    selectedImage === idx ? 'border-neutral-900 ring-2 ring-neutral-900/30' : 'border-neutral-200 opacity-70'
                   }`}
                 >
                   <img src={img} alt="thumb" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -211,37 +281,36 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
           <div className="lg:col-span-6 space-y-5">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                  Premium Herbal Formulation
+                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
+                  {currentProduct.badge}
                 </span>
                 <span className="text-[11px] text-amber-600 font-semibold">
-                  ★★★★★ (4.9/5 from 342 reviews)
+                  ★★★★★ ({currentProduct.rating})
                 </span>
               </div>
               <h1 className="text-3xl font-extrabold text-neutral-900 tracking-tight">
-                Herbal Vitality Oil
+                {currentProduct.title}
               </h1>
               <div className="text-xs text-neutral-500 mt-1">
-                Vendor: <span className="font-semibold text-neutral-800">Herbi Vital</span> | SKU: HV-OIL-01
+                Vendor: <span className="font-semibold text-neutral-800">{currentProduct.vendor}</span> | SKU: {currentProduct.sku}
               </div>
             </div>
 
-            {/* Price section matching Screenshot 2 */}
+            {/* Price section matching Screenshot */}
             <div className="flex items-baseline gap-3 py-2 border-y border-neutral-200">
               <span className="text-2xl text-neutral-400 line-through font-semibold">
-                Rs. 2,200.00
+                Rs. {currentProduct.comparePrice.toLocaleString()}
               </span>
               <span className="text-3xl font-black text-red-600">
-                Rs. 1,500.00
+                Rs. {currentProduct.price.toLocaleString()}
               </span>
               <span className="text-xs bg-red-100 text-red-800 font-bold px-2 py-0.5 rounded">
-                Save Rs. 700
+                Save Rs. {currentProduct.saveAmount.toLocaleString()}
               </span>
             </div>
 
             <p className="text-xs text-neutral-600 leading-relaxed">
-              Herbal Vitality Oil is a natural blend designed to support stamina, energy, and overall vitality. 
-              It helps promote strength and daily wellness through consistent external use and herbal nourishment.
+              {currentProduct.description}
             </p>
 
             {/* Quantity Stepper & Add to Cart button */}
@@ -264,32 +333,116 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
                 </button>
               </div>
 
-              <button className="flex-1 bg-lime-700 hover:bg-lime-800 text-white text-xs font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 shadow-sm transition-all">
+              <button className="flex-1 border border-neutral-800 text-neutral-900 hover:bg-neutral-100 text-xs font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all">
                 <ShoppingBag className="w-4 h-4" />
-                <span>ADD TO CART</span>
+                <span>Add To Cart</span>
               </button>
             </div>
 
             {/* THE SIGNATURE COD REALISTIC BUTTON (Matching Screenshot 2) */}
-            <div className="pt-2">
+            <div className="pt-1">
               <button
                 onClick={handleOpenCodModal}
                 style={{
-                  backgroundColor: settings.buttonColor,
-                  color: settings.buttonTextColor,
-                  borderRadius: `${settings.buttonBorderRadius}px`
+                  backgroundColor: settings.buttonColor || '#000000',
+                  color: settings.buttonTextColor || '#ffffff',
+                  borderRadius: `${settings.buttonBorderRadius ?? 24}px`,
+                  borderWidth: `${settings.buttonBorderWidth ?? 0}px`,
+                  borderColor: settings.buttonBorderColor || '#000000',
+                  fontSize: `${settings.buttonFontSize || 15}px`,
+                  boxShadow: settings.buttonShadow ? `0 ${settings.buttonShadow * 2}px ${settings.buttonShadow * 4}px rgba(0,0,0,0.25)` : undefined
                 }}
-                className="w-full py-3.5 px-4 text-sm font-bold shadow-lg hover:brightness-105 active:scale-[0.99] transition-all flex flex-col items-center justify-center cursor-pointer border border-emerald-700"
+                className={`w-full py-3.5 px-4 font-bold shadow-lg hover:brightness-105 active:scale-[0.99] transition-all flex flex-col items-center justify-center cursor-pointer ${
+                  settings.buttonAnimation === 'Shaker' ? 'animate-shaker' : ''
+                }`}
               >
                 <div className="flex items-center gap-2">
-                  <span>{settings.buttonText}</span>
+                  {settings.buttonIcon !== 'No icon' && (
+                    settings.buttonIcon === 'Truck icon' ? (
+                      <Truck className="w-4 h-4 shrink-0" />
+                    ) : settings.buttonIcon === 'Bag icon' ? (
+                      <ShoppingBag className="w-4 h-4 shrink-0" />
+                    ) : (
+                      <ShoppingCart className="w-4 h-4 shrink-0" />
+                    )
+                  )}
+                  <span>{settings.buttonText || 'Buy with Cash on Delivery'}</span>
                 </div>
-                {settings.buttonSubtext && (
+                {settings.buttonSubtitle && (
                   <span className="text-[11px] font-normal opacity-90 mt-0.5">
-                    {settings.buttonSubtext}
+                    {settings.buttonSubtitle}
                   </span>
                 )}
               </button>
+            </div>
+
+            {/* Guaranteed Safe Checkout Badge */}
+            <div className="border border-neutral-200 rounded-xl p-3 bg-neutral-50/80 text-center space-y-1.5">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-neutral-700">
+                <Lock className="w-3.5 h-3.5 text-neutral-600" />
+                <span>Guaranteed Safe &amp; Secure Checkout</span>
+              </div>
+              <div className="flex items-center justify-center gap-3 text-[11px] text-neutral-500 font-medium">
+                <span className="bg-white border border-neutral-200 px-2 py-0.5 rounded text-neutral-700">Cash on Delivery</span>
+                <span className="bg-white border border-neutral-200 px-2 py-0.5 rounded text-neutral-700">Trax Logistics</span>
+                <span className="bg-white border border-neutral-200 px-2 py-0.5 rounded text-neutral-700">Leopard Courier</span>
+              </div>
+            </div>
+
+            {/* Accordions matching screenshot */}
+            <div className="border-t border-neutral-200 divide-y divide-neutral-200 text-xs">
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setOpenAccordion(openAccordion === 'shipping' ? null : 'shipping')}
+                  className="w-full py-3 flex items-center justify-between text-neutral-800 font-semibold hover:text-black"
+                >
+                  <span>Shipping and Returns</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${openAccordion === 'shipping' ? 'rotate-180' : ''}`} />
+                </button>
+                {openAccordion === 'shipping' && (
+                  <div className="pb-3 text-neutral-600 space-y-1 leading-relaxed text-[11px]">
+                    <p>• Delivery all across Pakistan within 2 to 4 working days.</p>
+                    <p>• Free shipping on all orders paid via Cash on Delivery.</p>
+                    <p>• 7-day hassle-free replacement if parcel is damaged in transit.</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setOpenAccordion(openAccordion === 'policies' ? null : 'policies')}
+                  className="w-full py-3 flex items-center justify-between text-neutral-800 font-semibold hover:text-black"
+                >
+                  <span>Store Policies</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${openAccordion === 'policies' ? 'rotate-180' : ''}`} />
+                </button>
+                {openAccordion === 'policies' && (
+                  <div className="pb-3 text-neutral-600 space-y-1 leading-relaxed text-[11px]">
+                    <p>• 100% Genuine and authentic herbal formulations.</p>
+                    <p>• Customer support available 24/7 on WhatsApp &amp; phone.</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setOpenAccordion(openAccordion === 'share' ? null : 'share')}
+                  className="w-full py-3 flex items-center justify-between text-neutral-800 font-semibold hover:text-black"
+                >
+                  <span>Share Product</span>
+                  <Share2 className="w-3.5 h-3.5 text-neutral-500" />
+                </button>
+                {openAccordion === 'share' && (
+                  <div className="pb-3 flex gap-2">
+                    <span className="text-[11px] bg-neutral-100 hover:bg-neutral-200 px-3 py-1 rounded cursor-pointer font-medium">Facebook</span>
+                    <span className="text-[11px] bg-neutral-100 hover:bg-neutral-200 px-3 py-1 rounded cursor-pointer font-medium">WhatsApp</span>
+                    <span className="text-[11px] bg-neutral-100 hover:bg-neutral-200 px-3 py-1 rounded cursor-pointer font-medium">Copy Link</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Delivery Estimation Banner matching Screenshot 2 */}
@@ -306,31 +459,27 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
                 </div>
               </div>
             )}
-
-            {/* Trust Points */}
-            <div className="grid grid-cols-3 gap-2 pt-2 text-center">
-              <div className="p-2.5 rounded-lg border border-neutral-200 bg-white">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
-                <div className="text-[11px] font-bold text-neutral-800">Cash on Delivery</div>
-                <div className="text-[10px] text-neutral-500">Pay when you receive</div>
-              </div>
-              <div className="p-2.5 rounded-lg border border-neutral-200 bg-white">
-                <Truck className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
-                <div className="text-[11px] font-bold text-neutral-800">Express Courier</div>
-                <div className="text-[10px] text-neutral-500">2-3 days delivery</div>
-              </div>
-              <div className="p-2.5 rounded-lg border border-neutral-200 bg-white">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 mx-auto mb-1" />
-                <div className="text-[11px] font-bold text-neutral-800">100% Original</div>
-                <div className="text-[10px] text-neutral-500">Guaranteed quality</div>
-              </div>
-            </div>
           </div>
         </div>
       </main>
 
-      {/* COD REALISTIC 1-CLICK CHECKOUT MODAL POPUP */}
-      {isCodModalOpen && (
+      {/* RENDER MODAL: EXACT LEGACY RELEASIT MODAL OR MODERN MODAL */}
+      {settings.themeStyle === 'legacy' ? (
+        <LegacyCodModal
+          isOpen={isCodModalOpen}
+          onClose={() => setIsCodModalOpen(false)}
+          settings={settings}
+          onPlaceOrder={onPlaceOrder}
+          onViewInAdmin={onBackToAdmin}
+          product={{
+            title: currentProduct.title,
+            price: currentProduct.price,
+            image: currentProduct.images[0],
+            quantity: productQty
+          }}
+        />
+      ) : (
+        isCodModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-8">
             {/* Modal Header */}
@@ -583,7 +732,7 @@ export const StorefrontSimulation: React.FC<StorefrontSimulationProps> = ({
             )}
           </div>
         </div>
-      )}
+      ))}
     </div>
   );
 };

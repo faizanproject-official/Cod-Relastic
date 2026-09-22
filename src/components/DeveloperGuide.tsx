@@ -445,13 +445,80 @@ app.post('/api/storefront/orders/create', async (req, res) => {
             </div>
           </div>
 
-          <div className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-xl text-xs space-y-2">
-            <div className="font-bold text-neutral-900 dark:text-white">
-              Shopify Partner Dashboard میں یہ یو آر ایل داخل کریں:
+          {/* Your Live Railway Deployment Status */}
+          <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700/60 p-4 rounded-xl space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200">
+                  Your Live Railway Hosted URL:
+                </span>
+              </div>
+              <span className="text-[10px] font-mono bg-emerald-200 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded font-bold">
+                Online &amp; Active
+              </span>
             </div>
-            <div className="font-mono text-[11px] space-y-1 text-neutral-700 dark:text-neutral-300">
-              <div><strong>App URL:</strong> https://your-hosted-domain.run.app</div>
-              <div><strong>Allowed redirection URLs:</strong> https://your-hosted-domain.run.app/api/auth/callback</div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 bg-white dark:bg-neutral-900 p-2.5 rounded-lg border border-emerald-200 dark:border-emerald-800 font-mono text-xs text-neutral-800 dark:text-neutral-200">
+              <span className="truncate">https://cod-relastic-production.up.railway.app</span>
+              <button
+                type="button"
+                onClick={() => copyToClipboard('https://cod-relastic-production.up.railway.app', 'railway-url')}
+                className="shrink-0 px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-sans font-semibold flex items-center justify-center gap-1 shadow-xs"
+              >
+                {copiedSection === 'railway-url' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedSection === 'railway-url' ? 'Copied' : 'Copy URL'}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-xl text-xs space-y-3">
+            <div className="font-bold text-neutral-900 dark:text-white flex items-center justify-between">
+              <span>Shopify Partner Dev Dashboard میں یہ ویلیوز ڈالیں:</span>
+              <span className="text-[11px] text-neutral-500 font-normal">Dev Dashboard &gt; App setup</span>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="bg-white dark:bg-neutral-900 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold text-neutral-500 uppercase block">App URL</span>
+                  <span className="font-mono text-xs text-indigo-600 dark:text-indigo-400 font-semibold select-all">
+                    https://cod-relastic-production.up.railway.app
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard('https://cod-relastic-production.up.railway.app', 'app-url')}
+                  className="p-1.5 text-neutral-500 hover:text-neutral-800"
+                >
+                  {copiedSection === 'app-url' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+
+              <div className="bg-white dark:bg-neutral-900 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold text-neutral-500 uppercase block">Allowed redirection URL(s)</span>
+                  <span className="font-mono text-xs text-indigo-600 dark:text-indigo-400 font-semibold select-all">
+                    https://cod-relastic-production.up.railway.app/api/auth/callback
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard('https://cod-relastic-production.up.railway.app/api/auth/callback', 'redirect-url')}
+                  className="p-1.5 text-neutral-500 hover:text-neutral-800"
+                >
+                  {copiedSection === 'redirect-url' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="text-[11px] text-neutral-600 dark:text-neutral-400 pt-1 leading-relaxed bg-white/60 dark:bg-neutral-900/60 p-2.5 rounded-lg border border-neutral-200 dark:border-neutral-700">
+              <strong className="text-neutral-900 dark:text-neutral-200">Shopify Partner Dev Dashboard گائیڈ:</strong><br />
+              1. <strong>partners.shopify.com</strong> لاگ ان کریں۔<br />
+              2. لیفٹ مینیو سے <strong>Apps</strong> میں جائیں اور <strong>COD Realistic</strong> پر کلک کریں۔<br />
+              3. اگر نیا ڈیش بورڈ نظر آ رہا ہے تو اوپر دائیں جانب <strong>"Dev Dashboard"</strong> پر کلک کریں۔<br />
+              4. <strong>Configuration / App setup</strong> سیکشن میں <strong>App URL</strong> اور <strong>Allowed redirection URL</strong> درج کر کے <strong>Save</strong> کریں۔<br />
+              5. پھر <strong>"Test your app"</strong> پر کلک کریں اور اپنا ڈویلپمنٹ سٹور منتخب کر کے انسٹال کر لیں۔
             </div>
           </div>
         </div>

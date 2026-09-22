@@ -1,3 +1,73 @@
+export interface FormBlockItem {
+  id: string;
+  name: string;
+  label?: string;
+  type: 'summary' | 'totals' | 'shipping_rates' | 'discount' | 'section_header' | 'field' | 'checkbox' | 'button' | string;
+  enabled: boolean;
+  required?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
+  isCustom?: boolean;
+  placeholder?: string;
+  icon?: string;
+  showIcon?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  regexValidation?: string;
+  invalidErrorText?: string;
+  prefixText?: string;
+  alignment?: 'Left' | 'Center' | 'Right';
+  fontSize?: number;
+  fontWeight?: 'Normal' | 'Bold' | 'Semi-bold';
+  textColor?: string;
+  subtitle?: string;
+  animation?: string;
+  backgroundColor?: string;
+  borderRadius?: number;
+  borderWidth?: number;
+  borderColor?: string;
+  shadow?: number;
+  preselected?: boolean;
+  disableDropdown?: boolean;
+  removedProvinces?: string;
+  limitOnePerOrder?: boolean;
+  discountsLineText?: string;
+  applyButtonText?: string;
+  applyButtonBgColor?: string;
+  invalidDiscountErrorText?: string;
+  oneDiscountAllowedErrorText?: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  options?: string[];
+  whatsappNumber?: string;
+  whatsappMessage?: string;
+  linkUrl?: string;
+  openInNewTab?: boolean;
+  minQty?: number;
+  maxQty?: number;
+  defaultQty?: number;
+  fieldInputType?: 'text' | 'number' | 'textarea' | 'date';
+}
+
+export interface FormStyleConfig {
+  textColor: string;
+  fontSize: number;
+  backgroundColor: string;
+  borderRadius: number;
+  borderWidth: number;
+  borderColor: string;
+  shadow: number;
+  hideCloseButton: boolean;
+  hideFieldLabels: boolean;
+  enableRtl: boolean;
+  enableFullScreenMobile: boolean;
+}
+
+export interface FormTextsConfig {
+  requiredFieldError: string;
+  invalidGenericError: string;
+}
+
 export interface FormSettings {
   formTitle: string;
   formSubtitle: string;
@@ -7,6 +77,15 @@ export interface FormSettings {
   buttonHoverColor: string;
   buttonTextColor: string;
   buttonBorderRadius: number;
+  buttonSubtitle?: string;
+  buttonAnimation?: string;
+  buttonIcon?: string;
+  stickyButtonPosition?: 'Top' | 'Bottom';
+  buttonFontSize?: number;
+  buttonBorderWidth?: number;
+  buttonBorderColor?: string;
+  buttonShadow?: number;
+  enableStickyMobile?: boolean;
   showCodBadge: boolean;
   codBadgeText: string;
   showUrgencyTimer: boolean;
@@ -33,7 +112,13 @@ export interface FormSettings {
     badge?: string;
   }[];
   primaryCurrency: string;
-  themeStyle: 'modern' | 'minimal' | 'rounded' | 'dark';
+  themeStyle: 'legacy' | 'modern' | 'minimal' | 'rounded' | 'dark';
+  formMode?: 'popup' | 'embedded';
+  selectedCountry?: string;
+  enableMultiCountry?: boolean;
+  blocks?: FormBlockItem[];
+  formStyle?: FormStyleConfig;
+  formTexts?: FormTextsConfig;
 }
 
 export interface BillingPlan {

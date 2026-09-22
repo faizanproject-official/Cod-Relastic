@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TopNavigation } from './components/TopNavigation';
+import { AppHeader } from './components/AppHeader';
+import { AppDashboard } from './components/AppDashboard';
 import { Sidebar } from './components/Sidebar';
 import { FormDesigner } from './components/FormDesigner';
 import { BillingPlans } from './components/BillingPlans';
@@ -21,7 +22,7 @@ import { FormSettings, CodOrder, FraudSettings } from './types';
 
 export default function App() {
   const [activeMode, setActiveMode] = useState<'admin' | 'storefront' | 'developer-guide'>('admin');
-  const [currentTab, setCurrentTab] = useState<string>('billing-plans');
+  const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [formSettings, setFormSettings] = useState<FormSettings>(initialFormSettings);
   const [activePlanId, setActivePlanId] = useState<string>('forever-free');
   const [orders, setOrders] = useState<CodOrder[]>(initialOrders);
@@ -43,7 +44,7 @@ export default function App() {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
   };
 
-  const handleSelectSidebarTab = (tab: string) => {
+  const handleSelectTab = (tab: string) => {
     if (tab === 'developer-guide') {
       setActiveMode('developer-guide');
     } else {
@@ -66,12 +67,12 @@ export default function App() {
   // When in Developer Guide mode
   if (activeMode === 'developer-guide') {
     return (
-      <div className="min-h-screen bg-[#f6f6f7] dark:bg-[#121212] text-neutral-900 dark:text-neutral-100 flex flex-col font-sans">
-        <TopNavigation
-          activeMode={activeMode}
-          setActiveMode={setActiveMode}
-          currentView="developer-guide"
-          onSelectView={handleSelectSidebarTab}
+      <div className="min-h-screen bg-[#f6f6f7] text-neutral-900 flex flex-col font-sans">
+        <AppHeader
+          currentTab="developer-guide"
+          onSelectTab={handleSelectTab}
+          onOpenStorePreview={() => setActiveMode('storefront')}
+          onOpenDeveloperGuide={() => setActiveMode('developer-guide')}
         />
         <div className="flex-1 overflow-y-auto">
           <DeveloperGuide />
@@ -80,32 +81,49 @@ export default function App() {
     );
   }
 
-  // Otherwise in Shopify Admin App mode
+  // Shopify Embedded App mode - Layout with left sidebar matching Image 1
   return (
-    <div className="min-h-screen bg-[#f6f6f7] dark:bg-[#121212] text-neutral-900 dark:text-neutral-100 flex flex-col font-sans">
-      <TopNavigation
-        activeMode={activeMode}
-        setActiveMode={setActiveMode}
-        currentView={currentTab}
-        onSelectView={handleSelectSidebarTab}
+    <div className="min-h-screen bg-[#f6f6f7] text-neutral-900 flex flex-col font-sans">
+      <AppHeader
+        currentTab={currentTab}
+        onSelectTab={handleSelectTab}
+        onOpenStorePreview={() => setActiveMode('storefront')}
+        onOpenDeveloperGuide={() => setActiveMode('developer-guide')}
       />
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar matching Releasit Shopify Admin */}
-        <Sidebar
-          currentTab={currentTab}
-          onSelectTab={handleSelectSidebarTab}
-          pendingOrdersCount={orders.filter(o => o.status === 'Pending').length}
-        />
+        {/* Fixed vertical sidebar on the left matching Image 1 (hidden on Form Designer for full-width layout matching screenshot) */}
+        {currentTab !== 'form-designer' && (
+          <Sidebar
+            currentTab={currentTab}
+            onSelectTab={handleSelectTab}
+            onOpenStorePreview={() => setActiveMode('storefront')}
+            onOpenDeveloperGuide={() => setActiveMode('developer-guide')}
+            pendingOrdersCount={orders.filter(o => o.status === 'Pending').length}
+          />
+        )}
 
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-[#f6f6f7] dark:bg-[#121212]">
-          {currentTab === 'billing-plans' && (
-            <BillingPlans
-              plans={billingPlansData}
-              activePlanId={activePlanId}
-              onSelectPlan={setActivePlanId}
+        {/* Main Dashboard Content to its right */}
+        <main className="flex-1 overflow-y-auto bg-[#f6f6f7]">
+          {currentTab === 'dashboard' && (
+            <AppDashboard
+              settings={formSettings}
+              orders={orders}
+              onNavigate={handleSelectTab}
+              onOpenStorePreview={() => setActiveMode('storefront')}
+              merchantEmail="pickhubfazig@gmail.com"
+              storeName="herbivital-2-store"
             />
+          )}
+
+          {currentTab === 'billing-plans' && (
+            <div className="max-w-6xl mx-auto px-4 py-6">
+              <BillingPlans
+                plans={billingPlansData}
+                activePlanId={activePlanId}
+                onSelectPlan={setActivePlanId}
+              />
+            </div>
           )}
 
           {currentTab === 'form-designer' && (
